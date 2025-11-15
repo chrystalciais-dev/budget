@@ -481,7 +481,7 @@
                 </div>
                 <div class="summary-item warning">
                     <div class="summary-label">Charges fixes</div>
-                    <div class="summary-value">943€</div>
+                    <div class="summary-value" id="totalCharges">943€</div>
                 </div>
                 <div class="summary-item warning">
                     <div class="summary-label">Dépenses variables</div>
@@ -498,6 +498,7 @@
             <button class="tab active" onclick="showTab('depenses')">Dépenses</button>
             <button class="tab" onclick="showTab('statistiques')">Statistiques</button>
             <button class="tab" onclick="showTab('historique')">Historique</button>
+            <button class="tab" onclick="showTab('categories')">Catégories</button>
             <button class="tab" onclick="showTab('charges')">Charges</button>
         </div>
 
@@ -507,15 +508,11 @@
                 <div class="depense-form">
                     <div class="form-group">
                         <label>Catégorie</label>
-                        <select id="category">
-                            <option value="🛒 Alimentation">🛒 Alimentation</option>
-                            <option value="⛽ Essence">⛽ Essence</option>
-                            <option value="🎉 Loisirs">🎉 Loisirs</option>
-                            <option value="🍽️ Restaurant">🍽️ Restaurant</option>
-                            <option value="🛍️ Shopping">🛍️ Shopping</option>
-                            <option value="💊 Santé">💊 Santé</option>
-                            <option value="📱 Autre">📱 Autre</option>
-                        </select>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="category" style="flex: 1;">
+                            </select>
+                            <button onclick="ouvrirAjoutCategorie()" style="width: auto; padding: 12px 20px;">➕</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Description</label>
@@ -571,66 +568,54 @@
             </div>
         </div>
 
+        <div id="categoriesTab" class="tab-content">
+            <div class="card">
+                <h2>Gérer mes catégories</h2>
+                <div class="depense-form">
+                    <div class="form-group">
+                        <label>Emoji (optionnel)</label>
+                        <input type="text" id="newCategoryEmoji" placeholder="🎯" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom de la catégorie</label>
+                        <input type="text" id="newCategoryName" placeholder="Ex: Abonnements">
+                    </div>
+                    <button onclick="ajouterCategorie()">Ajouter la catégorie</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Mes catégories</h2>
+                <div id="categoriesList"></div>
+            </div>
+        </div>
+
         <div id="chargesTab" class="tab-content">
             <div class="card">
-                <h2>Charges fixes mensuelles</h2>
-                <div class="charges-list">
-                    <div class="charge-item">
-                        <span class="charge-name">🏠 Loyer</span>
-                        <span class="charge-amount">430,00€</span>
+                <h2>Ajouter une charge fixe</h2>
+                <div class="depense-form">
+                    <div class="form-group">
+                        <label>Emoji (optionnel)</label>
+                        <input type="text" id="newChargeEmoji" placeholder="🏠" maxlength="2">
                     </div>
-                    <div class="charge-item">
-                        <span class="charge-name">🚗 Voiture</span>
-                        <span class="charge-amount">58,12€</span>
+                    <div class="form-group">
+                        <label>Nom de la charge</label>
+                        <input type="text" id="newChargeName" placeholder="Ex: Assurance habitation">
                     </div>
-                    <div class="charge-item">
-                        <span class="charge-name">💧 Eau maison 1</span>
-                        <span class="charge-amount">54,00€</span>
+                    <div class="form-group">
+                        <label>Montant mensuel (€)</label>
+                        <input type="number" id="newChargeAmount" placeholder="0.00" step="0.01">
                     </div>
-                    <div class="charge-item">
-                        <span class="charge-name">⚡ Électricité maison 1</span>
-                        <span class="charge-amount">143,89€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">💧 Eau maison 2</span>
-                        <span class="charge-amount">37,84€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">⚡ Électricité maison 2</span>
-                        <span class="charge-amount">55,00€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">📱 Orange</span>
-                        <span class="charge-amount">79,98€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">🤖 Claude</span>
-                        <span class="charge-amount">21,60€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">🎬 Netflix</span>
-                        <span class="charge-amount">21,99€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">🍎 Apple</span>
-                        <span class="charge-amount">19,95€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">🛡️ AXA</span>
-                        <span class="charge-amount">11,23€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">🎮 Twitch</span>
-                        <span class="charge-amount">6,99€</span>
-                    </div>
-                    <div class="charge-item">
-                        <span class="charge-name">📚 Gleeph</span>
-                        <span class="charge-amount">1,99€</span>
-                    </div>
-                    <div class="charge-item total-row">
-                        <span>Total des charges fixes</span>
-                        <span>942,58€</span>
-                    </div>
+                    <button onclick="ajouterCharge()">Ajouter la charge</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Mes charges fixes mensuelles</h2>
+                <div class="charges-list" id="chargesList"></div>
+                <div class="charge-item total-row">
+                    <span>Total des charges fixes</span>
+                    <span id="totalChargesFixes">942,58€</span>
                 </div>
             </div>
         </div>
@@ -641,9 +626,172 @@
         const CHARGES_FIXES = 942.58;
         const MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         
+        const DEFAULT_CATEGORIES = [
+            '🛒 Alimentation',
+            '⛽ Essence',
+            '🎉 Loisirs',
+            '🍽️ Restaurant',
+            '🛍️ Shopping',
+            '💊 Santé',
+            '📱 Autre'
+        ];
+
+        const DEFAULT_CHARGES = [
+            { name: '🏠 Loyer', amount: 430.00 },
+            { name: '🚗 Voiture', amount: 58.12 },
+            { name: '💧 Eau maison 1', amount: 54.00 },
+            { name: '⚡ Électricité maison 1', amount: 143.89 },
+            { name: '💧 Eau maison 2', amount: 37.84 },
+            { name: '⚡ Électricité maison 2', amount: 55.00 },
+            { name: '📱 Orange', amount: 79.98 },
+            { name: '🤖 Claude', amount: 21.60 },
+            { name: '🎬 Netflix', amount: 21.99 },
+            { name: '🍎 Apple', amount: 19.95 },
+            { name: '🛡️ AXA', amount: 11.23 },
+            { name: '🎮 Twitch', amount: 6.99 },
+            { name: '📚 Gleeph', amount: 1.99 }
+        ];
+
         let currentDate = new Date();
         let viewDate = new Date(currentDate);
         let allData = JSON.parse(localStorage.getItem('budgetData')) || {};
+        let categories = JSON.parse(localStorage.getItem('categories')) || DEFAULT_CATEGORIES;
+        let charges = JSON.parse(localStorage.getItem('charges')) || DEFAULT_CHARGES;
+
+        function saveCharges() {
+            localStorage.setItem('charges', JSON.stringify(charges));
+        }
+
+        function getTotalCharges() {
+            return charges.reduce((sum, charge) => sum + charge.amount, 0);
+        }
+
+        function ajouterCharge() {
+            const emoji = document.getElementById('newChargeEmoji').value.trim();
+            const name = document.getElementById('newChargeName').value.trim();
+            const amount = parseFloat(document.getElementById('newChargeAmount').value);
+
+            if (!name || !amount || amount <= 0) {
+                alert('Merci de remplir tous les champs correctement');
+                return;
+            }
+
+            const chargeName = emoji ? `${emoji} ${name}` : name;
+
+            charges.push({ name: chargeName, amount: amount });
+            saveCharges();
+            afficherCharges();
+            updateAllSummaries();
+
+            document.getElementById('newChargeEmoji').value = '';
+            document.getElementById('newChargeName').value = '';
+            document.getElementById('newChargeAmount').value = '';
+
+            alert('Charge ajoutée avec succès ! 🎉');
+        }
+
+        function supprimerCharge(index) {
+            if (!confirm(`Supprimer la charge "${charges[index].name}" ?`)) {
+                return;
+            }
+
+            charges.splice(index, 1);
+            saveCharges();
+            afficherCharges();
+            updateAllSummaries();
+        }
+
+        function afficherCharges() {
+            const container = document.getElementById('chargesList');
+            const total = getTotalCharges();
+            
+            container.innerHTML = charges.map((charge, index) => `
+                <div class="charge-item">
+                    <span class="charge-name">${charge.name}</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="charge-amount">${charge.amount.toFixed(2)}€</span>
+                        <button class="delete-btn" onclick="supprimerCharge(${index})" style="width: auto;">❌</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('totalChargesFixes').textContent = total.toFixed(2) + '€';
+        }
+
+        function updateAllSummaries() {
+            updateSummary();
+            const totalCharges = getTotalCharges();
+            const totalChargesElement = document.getElementById('totalCharges');
+            if (totalChargesElement) {
+                totalChargesElement.textContent = Math.round(totalCharges) + '€';
+            }
+        }
+
+        function saveCategories() {
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+
+        function loadCategories() {
+            const select = document.getElementById('category');
+            select.innerHTML = categories.map(cat => 
+                `<option value="${cat}">${cat}</option>`
+            ).join('');
+        }
+
+        function ouvrirAjoutCategorie() {
+            showTab('categories');
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab')[3].classList.add('active');
+        }
+
+        function ajouterCategorie() {
+            const emoji = document.getElementById('newCategoryEmoji').value.trim();
+            const name = document.getElementById('newCategoryName').value.trim();
+
+            if (!name) {
+                alert('Merci de renseigner le nom de la catégorie');
+                return;
+            }
+
+            const newCategory = emoji ? `${emoji} ${name}` : name;
+
+            if (categories.includes(newCategory)) {
+                alert('Cette catégorie existe déjà');
+                return;
+            }
+
+            categories.push(newCategory);
+            saveCategories();
+            loadCategories();
+            afficherCategories();
+
+            document.getElementById('newCategoryEmoji').value = '';
+            document.getElementById('newCategoryName').value = '';
+
+            alert('Catégorie ajoutée avec succès ! 🎉');
+        }
+
+        function supprimerCategorie(category) {
+            if (!confirm(`Supprimer la catégorie "${category}" ?\n\nAttention : les dépenses existantes dans cette catégorie seront conservées.`)) {
+                return;
+            }
+
+            categories = categories.filter(cat => cat !== category);
+            saveCategories();
+            loadCategories();
+            afficherCategories();
+        }
+
+        function afficherCategories() {
+            const container = document.getElementById('categoriesList');
+            
+            container.innerHTML = categories.map(cat => `
+                <div class="charge-item">
+                    <span class="charge-name">${cat}</span>
+                    <button class="delete-btn" onclick="supprimerCategorie('${cat.replace(/'/g, "\\'")}')">❌</button>
+                </div>
+            `).join('');
+        }
 
         function getMonthKey(date) {
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -710,6 +858,10 @@
                 updateEpargne();
             } else if (tabName === 'historique') {
                 updateHistory();
+            } else if (tabName === 'categories') {
+                afficherCategories();
+            } else if (tabName === 'charges') {
+                afficherCharges();
             }
         }
 
@@ -777,7 +929,8 @@
         function updateSummary() {
             const monthData = getCurrentMonthData();
             const totalDepenses = monthData.depenses.reduce((sum, d) => sum + d.amount, 0);
-            const resteDispo = REVENUS - CHARGES_FIXES - totalDepenses;
+            const totalCharges = getTotalCharges();
+            const resteDispo = REVENUS - totalCharges - totalDepenses;
 
             document.getElementById('totalDepenses').textContent = Math.round(totalDepenses) + '€';
             document.getElementById('resteDispo').textContent = Math.round(resteDispo) + '€';
@@ -857,6 +1010,7 @@
             const container = document.getElementById('historyList');
             const months = [];
             const now = new Date();
+            const totalCharges = getTotalCharges();
             
             for (let i = 0; i < 12; i++) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -870,7 +1024,7 @@
                 if (!data || data.depenses.length === 0) return null;
                 
                 const totalDepenses = data.depenses.reduce((sum, d) => sum + d.amount, 0);
-                const reste = REVENUS - CHARGES_FIXES - totalDepenses;
+                const reste = REVENUS - totalCharges - totalDepenses;
                 const epargne = data.epargneActuel || 0;
                 
                 return {
@@ -911,7 +1065,8 @@
             const monthData = getCurrentMonthData();
             const objectif = parseFloat(document.getElementById('epargneObjectif').value) || 200;
             const totalDepenses = monthData.depenses.reduce((sum, d) => sum + d.amount, 0);
-            const reste = REVENUS - CHARGES_FIXES - totalDepenses;
+            const totalCharges = getTotalCharges();
+            const reste = REVENUS - totalCharges - totalDepenses;
             const actuel = Math.max(0, reste >= objectif ? objectif : reste);
             
             monthData.epargneObjectif = objectif;
@@ -924,11 +1079,14 @@
             progressBar.style.width = pourcentage + '%';
             progressBar.textContent = actuel.toFixed(0) + '€ / ' + objectif + '€';
 
-            const budgetRestant = REVENUS - CHARGES_FIXES - objectif;
+            const budgetRestant = REVENUS - totalCharges - objectif;
             document.getElementById('budgetRestant').textContent = budgetRestant.toFixed(0) + '€';
         }
 
         // Initialisation
+        loadCategories();
+        afficherCharges();
+        updateAllSummaries();
         updateDisplay();
     </script>
 </body>
