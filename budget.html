@@ -47,6 +47,34 @@
             border-bottom: 3px solid #bb86fc;
         }
 
+        .month-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #1e1e30;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #3d3d5c;
+        }
+
+        .month-selector button {
+            background: #5e35b1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: auto;
+        }
+
+        .month-selector .current-month {
+            font-size: 20px;
+            font-weight: bold;
+            color: #bb86fc;
+        }
+
         .summary {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -226,16 +254,19 @@
             cursor: pointer;
             font-size: 14px;
             border: 1px solid #e91e63;
+            width: auto;
         }
 
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab {
             flex: 1;
+            min-width: 120px;
             padding: 15px;
             background: #2d2d44;
             border: 1px solid #3d3d5c;
@@ -287,6 +318,124 @@
             color: #666;
         }
 
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1e1e30;
+            border-radius: 15px;
+            border: 1px solid #3d3d5c;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            max-width: 60px;
+            background: linear-gradient(to top, #5e35b1, #bb86fc);
+            margin: 0 5px;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #bb86fc;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .category-list {
+            margin-top: 20px;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #2d2d44;
+            border-radius: 10px;
+            border: 1px solid #3d3d5c;
+        }
+
+        .category-bar {
+            flex: 1;
+            height: 10px;
+            background: #1e1e30;
+            border-radius: 5px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .category-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #5e35b1, #bb86fc);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .history-item {
+            background: #1e1e30;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #3d3d5c;
+        }
+
+        .history-month {
+            font-weight: bold;
+            color: #bb86fc;
+            margin-bottom: 8px;
+        }
+
+        .history-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .history-stat {
+            text-align: center;
+        }
+
+        .history-stat-label {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .history-stat-value {
+            color: #e0e0e0;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+
         @media (max-width: 600px) {
             .summary {
                 grid-template-columns: 1fr;
@@ -299,6 +448,18 @@
             .summary-value {
                 font-size: 28px;
             }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+            }
+
+            .history-stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -306,6 +467,13 @@
     <div class="container">
         <div class="card">
             <h1>💰 Mon Budget</h1>
+            
+            <div class="month-selector">
+                <button onclick="changeMonth(-1)">◀</button>
+                <div class="current-month" id="currentMonth">Novembre 2025</div>
+                <button onclick="changeMonth(1)">▶</button>
+            </div>
+
             <div class="summary">
                 <div class="summary-item">
                     <div class="summary-label">Revenus</div>
@@ -313,7 +481,7 @@
                 </div>
                 <div class="summary-item warning">
                     <div class="summary-label">Charges fixes</div>
-                    <div class="summary-value" id="totalCharges">943€</div>
+                    <div class="summary-value">943€</div>
                 </div>
                 <div class="summary-item warning">
                     <div class="summary-label">Dépenses variables</div>
@@ -328,8 +496,9 @@
 
         <div class="tabs">
             <button class="tab active" onclick="showTab('depenses')">Dépenses</button>
-            <button class="tab" onclick="showTab('charges')">Charges fixes</button>
-            <button class="tab" onclick="showTab('epargne')">Épargne</button>
+            <button class="tab" onclick="showTab('statistiques')">Statistiques</button>
+            <button class="tab" onclick="showTab('historique')">Historique</button>
+            <button class="tab" onclick="showTab('charges')">Charges</button>
         </div>
 
         <div id="depensesTab" class="tab-content active">
@@ -363,6 +532,42 @@
             <div class="card">
                 <h2>Mes dépenses ce mois-ci</h2>
                 <div id="depensesList"></div>
+            </div>
+        </div>
+
+        <div id="statistiquesTab" class="tab-content">
+            <div class="card">
+                <h2>📊 Dépenses par catégorie</h2>
+                <div class="category-list" id="categoryStats"></div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Évolution mensuelle</h2>
+                <div class="chart-container">
+                    <div class="bar-chart" id="monthlyChart"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💰 Objectif d'épargne</h2>
+                <div class="form-group">
+                    <label>Objectif mensuel (€)</label>
+                    <input type="number" id="epargneObjectif" value="200" step="10" onchange="updateEpargne()">
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="epargneProgress" style="width: 0%">0€</div>
+                </div>
+                <div style="margin-top: 15px; padding: 15px; background: #1e1e30; border-radius: 10px; border: 1px solid #3d3d5c;">
+                    <div style="color: #999; font-size: 14px;">Budget disponible après épargne</div>
+                    <div style="color: #bb86fc; font-size: 24px; font-weight: bold; margin-top: 5px;" id="budgetRestant">457€</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="historiqueTab" class="tab-content">
+            <div class="card">
+                <h2>📅 Historique des 12 derniers mois</h2>
+                <div id="historyList"></div>
             </div>
         </div>
 
@@ -429,41 +634,68 @@
                 </div>
             </div>
         </div>
-
-        <div id="epargneTab" class="tab-content">
-            <div class="card">
-                <h2>Objectif d'épargne mensuel</h2>
-                <div class="form-group">
-                    <label>Montant à épargner ce mois (€)</label>
-                    <input type="number" id="epargneObjectif" value="200" step="10" onchange="updateEpargne()">
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="epargneProgress" style="width: 0%">0€</div>
-                </div>
-                <div class="form-group">
-                    <label>Montant déjà épargné ce mois (€)</label>
-                    <input type="number" id="epargneActuel" value="0" step="10" onchange="updateEpargne()">
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>💡 Conseils</h2>
-                <div class="charge-item">
-                    <div>
-                        <div class="charge-name">Budget recommandé</div>
-                        <div style="font-size: 14px; color: #999; margin-top: 5px;">
-                            Avec un objectif d'épargne de 200€, il te reste <strong id="budgetRestant" style="color: #bb86fc;">457€</strong> pour tes dépenses variables ce mois.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
         const REVENUS = 1600;
         const CHARGES_FIXES = 942.58;
-        let depenses = JSON.parse(localStorage.getItem('depenses')) || [];
+        const MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        
+        let currentDate = new Date();
+        let viewDate = new Date(currentDate);
+        let allData = JSON.parse(localStorage.getItem('budgetData')) || {};
+
+        function getMonthKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function getCurrentMonthData() {
+            const key = getMonthKey(viewDate);
+            if (!allData[key]) {
+                allData[key] = {
+                    depenses: [],
+                    epargneObjectif: 200,
+                    epargneActuel: 0
+                };
+            }
+            return allData[key];
+        }
+
+        function saveData() {
+            localStorage.setItem('budgetData', JSON.stringify(allData));
+        }
+
+        function changeMonth(direction) {
+            viewDate.setMonth(viewDate.getMonth() + direction);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('currentMonth').textContent = 
+                `${MOIS[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
+            
+            const isCurrentMonth = getMonthKey(viewDate) === getMonthKey(currentDate);
+            document.querySelector('.depense-form').style.display = isCurrentMonth ? 'block' : 'none';
+            
+            if (!isCurrentMonth) {
+                const warning = document.querySelector('.card h2');
+                if (warning && warning.textContent === 'Ajouter une dépense') {
+                    warning.textContent = 'Consultation mois précédent (lecture seule)';
+                }
+            } else {
+                const warning = document.querySelector('.card h2');
+                if (warning && warning.textContent.includes('lecture seule')) {
+                    warning.textContent = 'Ajouter une dépense';
+                }
+            }
+
+            afficherDepenses();
+            updateSummary();
+            updateCategoryStats();
+            updateMonthlyChart();
+            updateHistory();
+            updateEpargne();
+        }
 
         function showTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -471,6 +703,14 @@
             
             event.target.classList.add('active');
             document.getElementById(tabName + 'Tab').classList.add('active');
+
+            if (tabName === 'statistiques') {
+                updateCategoryStats();
+                updateMonthlyChart();
+                updateEpargne();
+            } else if (tabName === 'historique') {
+                updateHistory();
+            }
         }
 
         function ajouterDepense() {
@@ -483,6 +723,7 @@
                 return;
             }
 
+            const monthData = getCurrentMonthData();
             const depense = {
                 id: Date.now(),
                 date: new Date().toLocaleDateString('fr-FR'),
@@ -491,34 +732,34 @@
                 amount: amount
             };
 
-            depenses.unshift(depense);
-            localStorage.setItem('depenses', JSON.stringify(depenses));
+            monthData.depenses.unshift(depense);
+            saveData();
 
             document.getElementById('description').value = '';
             document.getElementById('amount').value = '';
 
-            afficherDepenses();
-            updateSummary();
+            updateDisplay();
         }
 
         function supprimerDepense(id) {
             if (confirm('Supprimer cette dépense ?')) {
-                depenses = depenses.filter(d => d.id !== id);
-                localStorage.setItem('depenses', JSON.stringify(depenses));
-                afficherDepenses();
-                updateSummary();
+                const monthData = getCurrentMonthData();
+                monthData.depenses = monthData.depenses.filter(d => d.id !== id);
+                saveData();
+                updateDisplay();
             }
         }
 
         function afficherDepenses() {
             const container = document.getElementById('depensesList');
+            const monthData = getCurrentMonthData();
             
-            if (depenses.length === 0) {
+            if (monthData.depenses.length === 0) {
                 container.innerHTML = '<div class="empty-state">Aucune dépense enregistrée ce mois-ci</div>';
                 return;
             }
 
-            container.innerHTML = depenses.map(d => `
+            container.innerHTML = monthData.depenses.map(d => `
                 <div class="depense-item">
                     <div class="depense-info">
                         <div class="depense-date">${d.date}</div>
@@ -534,33 +775,161 @@
         }
 
         function updateSummary() {
-            const totalDepenses = depenses.reduce((sum, d) => sum + d.amount, 0);
+            const monthData = getCurrentMonthData();
+            const totalDepenses = monthData.depenses.reduce((sum, d) => sum + d.amount, 0);
             const resteDispo = REVENUS - CHARGES_FIXES - totalDepenses;
 
             document.getElementById('totalDepenses').textContent = Math.round(totalDepenses) + '€';
             document.getElementById('resteDispo').textContent = Math.round(resteDispo) + '€';
+        }
 
-            const epargneObjectif = parseFloat(document.getElementById('epargneObjectif').value) || 200;
-            const budgetRestant = REVENUS - CHARGES_FIXES - epargneObjectif;
-            document.getElementById('budgetRestant').textContent = budgetRestant.toFixed(0) + '€';
+        function updateCategoryStats() {
+            const monthData = getCurrentMonthData();
+            const categories = {};
+            let total = 0;
+
+            monthData.depenses.forEach(d => {
+                if (!categories[d.category]) {
+                    categories[d.category] = 0;
+                }
+                categories[d.category] += d.amount;
+                total += d.amount;
+            });
+
+            const container = document.getElementById('categoryStats');
+            
+            if (total === 0) {
+                container.innerHTML = '<div class="empty-state">Aucune dépense pour afficher les statistiques</div>';
+                return;
+            }
+
+            const sorted = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            
+            container.innerHTML = sorted.map(([cat, amount]) => {
+                const percentage = (amount / total * 100).toFixed(1);
+                return `
+                    <div class="category-item">
+                        <div style="min-width: 140px;">${cat}</div>
+                        <div class="category-bar">
+                            <div class="category-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div style="min-width: 80px; text-align: right;">
+                            <div style="color: #bb86fc; font-weight: bold;">${amount.toFixed(2)}€</div>
+                            <div style="color: #999; font-size: 12px;">${percentage}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateMonthlyChart() {
+            const container = document.getElementById('monthlyChart');
+            const months = [];
+            const now = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                months.push(d);
+            }
+
+            const maxAmount = Math.max(...months.map(m => {
+                const key = getMonthKey(m);
+                const data = allData[key];
+                return data ? data.depenses.reduce((sum, d) => sum + d.amount, 0) : 0;
+            }), 100);
+
+            container.innerHTML = months.map(m => {
+                const key = getMonthKey(m);
+                const data = allData[key];
+                const total = data ? data.depenses.reduce((sum, d) => sum + d.amount, 0) : 0;
+                const height = (total / maxAmount * 100);
+                
+                return `
+                    <div class="bar" style="height: ${height}%">
+                        <div class="bar-value">${Math.round(total)}€</div>
+                        <div class="bar-label">${MOIS[m.getMonth()].substring(0, 3)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateHistory() {
+            const container = document.getElementById('historyList');
+            const months = [];
+            const now = new Date();
+            
+            for (let i = 0; i < 12; i++) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                months.push(d);
+            }
+
+            const history = months.map(m => {
+                const key = getMonthKey(m);
+                const data = allData[key];
+                
+                if (!data || data.depenses.length === 0) return null;
+                
+                const totalDepenses = data.depenses.reduce((sum, d) => sum + d.amount, 0);
+                const reste = REVENUS - CHARGES_FIXES - totalDepenses;
+                const epargne = data.epargneActuel || 0;
+                
+                return {
+                    month: `${MOIS[m.getMonth()]} ${m.getFullYear()}`,
+                    depenses: totalDepenses,
+                    reste: reste,
+                    epargne: epargne
+                };
+            }).filter(h => h !== null);
+
+            if (history.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun historique disponible</div>';
+                return;
+            }
+
+            container.innerHTML = history.map(h => `
+                <div class="history-item">
+                    <div class="history-month">${h.month}</div>
+                    <div class="history-stats">
+                        <div class="history-stat">
+                            <div class="history-stat-label">Dépenses</div>
+                            <div class="history-stat-value" style="color: #ef5350;">${Math.round(h.depenses)}€</div>
+                        </div>
+                        <div class="history-stat">
+                            <div class="history-stat-label">Reste</div>
+                            <div class="history-stat-value" style="color: #00acc1;">${Math.round(h.reste)}€</div>
+                        </div>
+                        <div class="history-stat">
+                            <div class="history-stat-label">Épargné</div>
+                            <div class="history-stat-value" style="color: #26a69a;">${Math.round(h.epargne)}€</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function updateEpargne() {
-            const objectif = parseFloat(document.getElementById('epargneObjectif').value) || 0;
-            const actuel = parseFloat(document.getElementById('epargneActuel').value) || 0;
+            const monthData = getCurrentMonthData();
+            const objectif = parseFloat(document.getElementById('epargneObjectif').value) || 200;
+            const totalDepenses = monthData.depenses.reduce((sum, d) => sum + d.amount, 0);
+            const reste = REVENUS - CHARGES_FIXES - totalDepenses;
+            const actuel = Math.max(0, reste >= objectif ? objectif : reste);
+            
+            monthData.epargneObjectif = objectif;
+            monthData.epargneActuel = actuel;
+            saveData();
             
             const pourcentage = objectif > 0 ? Math.min((actuel / objectif) * 100, 100) : 0;
             
             const progressBar = document.getElementById('epargneProgress');
             progressBar.style.width = pourcentage + '%';
-            progressBar.textContent = actuel.toFixed(0) + '€';
+            progressBar.textContent = actuel.toFixed(0) + '€ / ' + objectif + '€';
 
-            updateSummary();
+            const budgetRestant = REVENUS - CHARGES_FIXES - objectif;
+            document.getElementById('budgetRestant').textContent = budgetRestant.toFixed(0) + '€';
         }
 
-        afficherDepenses();
-        updateSummary();
-        updateEpargne();
+        // Initialisation
+        updateDisplay();
     </script>
 </body>
 </html>
